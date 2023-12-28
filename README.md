@@ -76,5 +76,5 @@ npm i @tanstack/react-query @tanstack/react-query-devtools
 
 https://tanstack.com/query/v5/docs/react/guides/queries
 
-서버사이드에서도 prefetchInfiniteQuery로 변경
-커서 방식에 대한 이해
+revalidatePath('/home) > home 폴더에 있는 캐시 전체 삭제
+revalidateTag
