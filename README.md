@@ -69,6 +69,8 @@ Debounce 는 아무리 많은 이벤트가 발생해도 모두 무시하고 특�
 
 # react-query 
 
+## 설치
+
 ```shell
 npm i @tanstack/react-query @tanstack/react-query-devtools
 ```
