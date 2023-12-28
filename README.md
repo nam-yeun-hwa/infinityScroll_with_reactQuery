@@ -9,15 +9,14 @@
 - Scroll Event를 사용해서 구현할 때 구하는 offsetTop 값을 구할 때 는 정확한 값을 구하기 위해서 매번 layout을 새로 그리는데 이를 Reflow라 합니다. Intersection Observer를 사용하면 Reflow를 하지 않습니다.
 - Scroll Event를 사용하는것 보다 비교적 이해 및 사용하기가 쉽습니다.
 
-### Intersection Observer Options
+### Intersection Observer - Options
 
-간단한 Intersection Observer 생성 예제
 ```
 let observer = new IntersectionObserver(callback, options);
 ```
 
 Intersection Observer를 생성할 때는 옵션을 설정할 수 있습니다.
-옵션에는 root, rootMargin, threshold가 있는데요,
+옵션에는 root, rootMargin, threshold가 있습니다.
 
 ![](https://velog.velcdn.com/images/bunny/post/819b328a-2298-40f5-b4d1-4f71d52bfbd0/image.png)
 
