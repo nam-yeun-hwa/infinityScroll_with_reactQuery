@@ -73,6 +73,100 @@ Debounce 는 아무리 많은 이벤트가 발생해도 모두 무시하고 특�
 npm i @tanstack/react-query @tanstack/react-query-devtools
 ```
 
+## useQuery 사용법
+
+쿼리 함수가 변수에 따라 달라진다면 해당 변수를 쿼리 키에 포함시켜야 합니다. 쿼리 키는 검색하는 데이터를 고유하게 식별하며, 쿼리 함수에서 사용하는 변수가 변경될 경우 해당 변수를 쿼리 키에 포함시켜야 합니다. 
+쿼리 키에 종속 변수를 추가하면 해당 변수에 따라 독립적으로 캐시되며, 변수가 변경될 때마다 자동으로 다시 쿼리되어 새로운 데이터를 가져오게 됩니다. (staleTime 설정에 따라 달라집니다).
+
+```shell
+import { useQuery } from '@tanstack/react-query'
+
+function Todos({ todoId }) {
+  const result = useQuery({
+    queryKey: ['todos', todoId],
+    queryFn: () => fetchTodoById(todoId),
+  })
+}
+
+```
+
+- queryKey는 조회하고 싶은 데이터의 캐시 키를 넣습니다. 
+리액트 쿼리에서는 이 캐시 키를 사용하여 데이터를 캐싱합니다. 한번 받아온 다음 나중에 같은 요청을 해야 하는 상황에서 데이터가 이미 존재한다면 기존에 있던 데이터를 바로 보여 줍니다. 
+그리고 설정에 따라 데이터를 새로 요청할 수도 있습니다.
+
+- queryFn는 쿼리 키 값에 따라 실행 될 비동기 함수 입니다.
+</br>
+</br>
+useQuery Hook를 사용하여 반환된 result 객체는 다음 값을 가지고 있습니다.
+</br></br>
+
+- isPending : 아직 데이터를 받아오지 않았고, 현재 데이터를 요청 중
+- isError : 오류발생
+- isSuccess : 데이터 요청 성공
+- error - 요류가 발생했을 때 오류 정보를 지닙니다.
+- data - 요청 성공한 데이터를 가리킵니다.
+- isFetching - 데이터가 요청 중일때 true가 됩니다. 데이터가 이미 존재하는 상태에서 재요청을 할때 isLoding은 false이지만 inFatching는 true입니다.
+
+
+```shell
+function Todos() {
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodoList,
+  })
+
+  if (isPending) {
+    return <span>Loading...</span>
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>
+  }
+
+  // We can assume by this point that `isSuccess === true`
+  return (
+    <ul>
+      {data.map((todo) => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+## useQuery의 option
+
+useQuery를 사용할 때 세 번째 파라미터에 options 객체를 넣어서 해당 Hook의 작동 방식을 설정할 수 있습니다. 
+
+```shell
+import { useQuery } from '@tanstack/react-query'
+
+function Todos({ todoId }) {
+  const result = useQuery({
+    queryKey: ['todos', todoId],
+    queryFn: () => fetchTodoById(todoId),{
+        enabled:true;
+        refetchOnMount:true;
+    }
+  })
+}
+```
+
+options에 설정할 수 있는 필드들은 다음과 같습니다.
+|option|내용|
+|:---:|:---|
+|enabled|boolean 타입으리 값을 설정하며, 이 값이 false라면 컴포넌트가 마운트 될 때 자동으로 요청하지 않습니다. refetch 함수로만 요청이 시작 됩니다.|
+|retry| boolean or number or (failureCount : number, error : TError) => boolean 타입의 값을 설정하며, 요청이 실패 했을 때 재요청 할지 설정할 수 있습니다.</br>- 이 값을 true로 하면 실패 했을때 성공할 때까지 계속 반복 요청 합니다.</br>- 이 값을 false로 하면 실패 했을때 재요청하지 않습니다.</br>- 이 값을 3으로 하면 3번 재요청 합니다.</br>- 이 값을 함수 타입으로 설정하면 실패 횟수와 오류타입에 따라 재요청 할지 함수 내에서 결정할 수 있습니다.|
+|retryDelay| number or (retryAttemp:number, error: TError) => number 타입의 값을 설정하며, 요청이 실패한 후 재요청할 때 지연 시간을 얼마나 가질지 설정할 수 있습니다.</br>- 시간 단위는 ms(밀리세컨드)입니다.</br>- 이 값의 기본값은 (retryAttempt) => Math.min(1000 * 2 ** failureCount, 3000) 입니다. 실패 횟수 n에 따라 2의 n제곱 초 만큼 기다렸다가 재요청 합니다. 그리고 최대 30초까지 기다립니다.|
+|staleTime|데이터의 유효 기간을 ms 단위로 설정합니다. 기본값은 0입니다.|
+|cacheTime|데이터의 캐시 시간을 ms 단위로 설정합니다. 기본값은 5분입니다. 캐시 시간은 Hook을 사용하는 컴포넌트가 언마운트 되고 나서 해당 데이터를 얼마나 유지할지 결정 합니다.|
+|refetchInterval|false or number 타입의 값을 설정하며, 이 설정으로 n초마다 데이터를 새로고침 하도록 설정할 수 있습니다. 시간단위는 ms입니다.|
+|refetchOnmount|boolean 'always' 타입의 값을 설정하며 이 설정으로 컴포넌트가 마운트 될때 재요청하는 방식을 설정할 수 있습니다. 기본값은 true 입니다.</br>- true일 때는 데이터가 유효하지 않을 때 재요청 합니다.</br>- false일 때는 컴포넌트가 다시 마운트 되어도 재요청 하지 않습니다.</br>- 'always'일 때는 데이터의 유효 여부와 관계없이 무조건 재요청 합니다.|
+|onSucess|(data:Data) => void 타입의 함수를 설정 합니다. 데이터 요청이 성공하고 나서 해야할 일들을 입력해 줄수 있습니다.|
+|onError|(error:Error) => void 타입의 함수를 설정 합니다. 데이터 요청이 실패하고 나서 해야할 일들을 입력해 줄수 있습니다.|
+|onSettled|(data?: Data, error?: Error) => void 타입의 함수를 설정합니다. 데이터 요청의 성공 여부와 관계없이 요청이 끝나면 특정 함수를 호출 하도록 설정합니다.|
+|initialData|Data or () => Data 타입의 값을 설정합니다. Hook에서 사용할 데이터의 초깃값을 지정하고 싶을때 사용합니다.|
+
 https://tanstack.com/query/v5/docs/react/guides/queries
 
 revalidatePath('/home) > home 폴더에 있는 캐시 전체 삭제
