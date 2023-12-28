@@ -198,27 +198,69 @@ cacheTime은 useQuery Hook을 사용한 컴포넌트가 언마운트되고 나�
 ## QueryClientProvider 
 리액트 쿼리를 프로젝트에서 사용하기 전에 최상위 컴포넌트를 QueryClientProbider로 꼭 감싸줘야 합니다. QueryClientProvider는 리액트 쿼리에서 캐시를 관리할 때 사용하는 QueryClient 인스턴스를 자식 컴포넌트에서 사용할 수 있게 해줍니다.
 
-## dehydratedState
-
+## Hydrate
+React Query 버전 5에서 Hydrate는 서버 사이드 렌더링(SSR)과 관련된 새로운 개념입니다. 
+React Query를 사용하면 클라이언트와 서버 간의 상태를 쉽게 동기화할 수 있습니다. Hydrate 구성 요소를 사용하여 SSR에서 초기 데이터를 쉽게 가져올 수 있습니다.
 
 ```shell
 import React from 'react';
-import {QueryClient, QueryClientProvider, Hydrate} from 'react-query';
+import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 
-const queryClinet = new QueryClient();
+  const queryClient = new QueryClient();
+ 
 
-function App({Component, pageProps}){
+function App({ dataFromServer }){
     return(
         <QueryClientProvider client={queryClient}>
-            <Hydrate state={pageProps.dehydratedState}>
-                <childComponent/>
+          {/* Hydrate를 사용하여 서버에서 전달된 데이터로 초기화 */}
+            <Hydrate state={dataFromServer}>
+                <ChildComponent/>
             </Hydrate>
         </QueryClientProvider>
     )
 }
 ```
 
+```shell
+import React from "react";
+import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 
+export default async function Default({params}: Props) {
+  const {id} = params;
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({queryKey: ['posts', id], queryFn: getSinglePost})
+  await queryClient.prefetchQuery({queryKey: ['posts', id, 'comments'], queryFn: getComments})
+  const dehydratedState = dehydrate(queryClient)
+
+  return (
+    <div className={style.container}>
+      <HydrationBoundary state={dehydratedState}>
+         <ChildComponent/>
+      </HydrationBoundary>
+    </div>
+  );
+}
+```
+
+```shell
+export default function UserPosts({ username }: Props) {
+  const { data } = useQuery<IPost[], Object, IPost[], [_1: string, _2: string, _3: string]>({
+    queryKey: ['posts', 'users', username],
+    queryFn: getUserPosts,
+    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
+    gcTime: 300 * 1000,
+  });
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(['users', username]);
+  
+  if (user) {
+    return data?.map((post) => (
+      <Post key={post.postId} post={post} />
+    ))
+  }
+  return null;
+}
+```
 
 
 https://tanstack.com/query/v5/docs/react/guides/queries
