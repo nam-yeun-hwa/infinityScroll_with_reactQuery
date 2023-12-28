@@ -195,6 +195,32 @@ cacheTime은 useQuery Hook을 사용한 컴포넌트가 언마운트되고 나�
   3분 이상 경과 됏다면 데이터를 새로 요청하고 새로운 데이터로 대체 합니다.</br>
 
 
+## QueryClientProvider 
+리액트 쿼리를 프로젝트에서 사용하기 전에 최상위 컴포넌트를 QueryClientProbider로 꼭 감싸줘야 합니다. QueryClientProvider는 리액트 쿼리에서 캐시를 관리할 때 사용하는 QueryClient 인스턴스를 자식 컴포넌트에서 사용할 수 있게 해줍니다.
+
+## dehydratedState
+
+
+```shell
+import React from 'react';
+import {QueryClient, QueryClientProvider, Hydrate} from 'react-query';
+
+const queryClinet = new QueryClient();
+
+function App({Component, pageProps}){
+    return(
+        <QueryClientProvider client={queryClient}>
+            <Hydrate state={pageProps.dehydratedState}>
+                <childComponent/>
+            </Hydrate>
+        </QueryClientProvider>
+    )
+}
+```
+
+
+
+
 https://tanstack.com/query/v5/docs/react/guides/queries
 
 revalidatePath('/home) > home 폴더에 있는 캐시 전체 삭제
