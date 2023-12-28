@@ -155,17 +155,17 @@ function Todos({ todoId }) {
 options에 설정할 수 있는 필드들은 다음과 같습니다.
 |option|내용|
 |:---:|:---|
-|enabled|boolean 타입으리 값을 설정하며, 이 값이 false라면 컴포넌트가 마운트 될 때 자동으로 요청하지 않습니다. refetch 함수로만 요청이 시작 됩니다.|
-|retry| boolean or number or (failureCount : number, error : TError) => boolean 타입의 값을 설정하며, 요청이 실패 했을 때 재요청 할지 설정할 수 있습니다.</br>- 이 값을 true로 하면 실패 했을때 성공할 때까지 계속 반복 요청 합니다.</br>- 이 값을 false로 하면 실패 했을때 재요청하지 않습니다.</br>- 이 값을 3으로 하면 3번 재요청 합니다.</br>- 이 값을 함수 타입으로 설정하면 실패 횟수와 오류타입에 따라 재요청 할지 함수 내에서 결정할 수 있습니다.|
-|retryDelay| number or (retryAttemp:number, error: TError) => number 타입의 값을 설정하며, 요청이 실패한 후 재요청할 때 지연 시간을 얼마나 가질지 설정할 수 있습니다.</br>- 시간 단위는 ms(밀리세컨드)입니다.</br>- 이 값의 기본값은 (retryAttempt) => Math.min(1000 * 2 ** failureCount, 3000) 입니다. 실패 횟수 n에 따라 2의 n제곱 초 만큼 기다렸다가 재요청 합니다. 그리고 최대 30초까지 기다립니다.|
+|enabled|`boolean` 타입으리 값을 설정하며, 이 값이 `false`라면 컴포넌트가 마운트 될 때 자동으로 요청하지 않습니다. refetch 함수로만 요청이 시작 됩니다.|
+|retry| `boolean` or `number` or `(failureCount : number, error : TError) => boolean` 타입의 값을 설정하며, 요청이 실패 했을 때 재요청 할지 설정할 수 있습니다.</br>- 이 값을 true로 하면 실패 했을때 성공할 때까지 계속 반복 요청 합니다.</br>- 이 값을 false로 하면 실패 했을때 재요청하지 않습니다.</br>- 이 값을 3으로 하면 3번 재요청 합니다.</br>- 이 값을 함수 타입으로 설정하면 실패 횟수와 오류타입에 따라 재요청 할지 함수 내에서 결정할 수 있습니다.|
+|retryDelay| `number` or `(retryAttemp:number, error: TError) => number` 타입의 값을 설정하며, 요청이 실패한 후 재요청할 때 지연 시간을 얼마나 가질지 설정할 수 있습니다.</br>- 시간 단위는 ms(밀리세컨드)입니다.</br>- 이 값의 기본값은 (retryAttempt) => Math.min(1000 * 2 ** failureCount, 3000) 입니다. 실패 횟수 n에 따라 2의 n제곱 초 만큼 기다렸다가 재요청 합니다. 그리고 최대 30초까지 기다립니다.|
 |staleTime|데이터의 유효 기간을 ms 단위로 설정합니다. 기본값은 0입니다.|
 |cacheTime|데이터의 캐시 시간을 ms 단위로 설정합니다. 기본값은 5분입니다. 캐시 시간은 Hook을 사용하는 컴포넌트가 언마운트 되고 나서 해당 데이터를 얼마나 유지할지 결정 합니다.|
-|refetchInterval|false or number 타입의 값을 설정하며, 이 설정으로 n초마다 데이터를 새로고침 하도록 설정할 수 있습니다. 시간단위는 ms입니다.|
-|refetchOnmount|boolean 'always' 타입의 값을 설정하며 이 설정으로 컴포넌트가 마운트 될때 재요청하는 방식을 설정할 수 있습니다. 기본값은 true 입니다.</br>- true일 때는 데이터가 유효하지 않을 때 재요청 합니다.</br>- false일 때는 컴포넌트가 다시 마운트 되어도 재요청 하지 않습니다.</br>- 'always'일 때는 데이터의 유효 여부와 관계없이 무조건 재요청 합니다.|
-|onSucess|(data:Data) => void 타입의 함수를 설정 합니다. 데이터 요청이 성공하고 나서 해야할 일들을 입력해 줄수 있습니다.|
-|onError|(error:Error) => void 타입의 함수를 설정 합니다. 데이터 요청이 실패하고 나서 해야할 일들을 입력해 줄수 있습니다.|
-|onSettled|(data?: Data, error?: Error) => void 타입의 함수를 설정합니다. 데이터 요청의 성공 여부와 관계없이 요청이 끝나면 특정 함수를 호출 하도록 설정합니다.|
-|initialData|Data or () => Data 타입의 값을 설정합니다. Hook에서 사용할 데이터의 초깃값을 지정하고 싶을때 사용합니다.|
+|refetchInterval|`false or number` 타입의 값을 설정하며, 이 설정으로 n초마다 데이터를 새로고침 하도록 설정할 수 있습니다. 시간단위는 ms입니다.|
+|refetchOnmount|`boolean` `'always'` 타입의 값을 설정하며 이 설정으로 컴포넌트가 마운트 될때 재요청하는 방식을 설정할 수 있습니다. 기본값은 true 입니다.</br>- true일 때는 데이터가 유효하지 않을 때 재요청 합니다.</br>- false일 때는 컴포넌트가 다시 마운트 되어도 재요청 하지 않습니다.</br>- 'always'일 때는 데이터의 유효 여부와 관계없이 무조건 재요청 합니다.|
+|onSucess|`(data:Data) => void` 타입의 함수를 설정 합니다. 데이터 요청이 성공하고 나서 해야할 일들을 입력해 줄수 있습니다.|
+|onError|`(error:Error) => void` 타입의 함수를 설정 합니다. 데이터 요청이 실패하고 나서 해야할 일들을 입력해 줄수 있습니다.|
+|onSettled|`(data?: Data, error?: Error) => void` 타입의 함수를 설정합니다. 데이터 요청의 성공 여부와 관계없이 요청이 끝나면 특정 함수를 호출 하도록 설정합니다.|
+|initialData|`Data or () => Data` 타입의 값을 설정합니다. Hook에서 사용할 데이터의 초깃값을 지정하고 싶을때 사용합니다.|
 
 https://tanstack.com/query/v5/docs/react/guides/queries
 
