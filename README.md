@@ -33,3 +33,6 @@ Intersection Observer를 생성할 때는 옵션을 설정할 수 있습니다.
 - number 또는 number[]로 정의할 수 있습니다.</br>
 - number 로 정의할 경우, Target Element 의 노출 비율에 따라 Callback Function을 한번 호출할 수 있지만, number[] 로 정의할 경우, 각각의 비율로 노출될 때마다 Callback Function을 호출합니다.</br>
 
+
+
+# react-query 
