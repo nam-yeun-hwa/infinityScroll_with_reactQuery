@@ -251,7 +251,8 @@ export default function UserPosts({ username }: Props) {
     gcTime: 300 * 1000,
   });
   const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(['users', username]);
+  //한번 캐싱된 데이터를 여러 컴포넌트에서 캐시키를 통해 값을 가져와서 사용 할 수 있다.
+  const user = queryClient.getQueryData(['users', username]); 
   
   if (user) {
     return data?.map((post) => (
