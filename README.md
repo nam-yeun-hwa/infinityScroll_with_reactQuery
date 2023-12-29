@@ -69,6 +69,11 @@ Debounce 는 아무리 많은 이벤트가 발생해도 모두 무시하고 특�
 
 # react-query 
 
+## react-Query 장점
+기존 리덕스 툴킷에 비해 캐싱시스템이 잘 되어 있다.
+또한 인터페이스를 표준화 하였다. 보통 데이터를 가져올 때 로딩, 성공, 실패의 상태가 존재를 하는데 예전 리덕스 사가를 사용시 에는 로딩, 성공, 실패의 상태가 없어서 직접 상태를 만들어서 사용했어야 했는데 (리덕스 툴킷에 와서 로딩, 성공, 실패가 표준화가 되었다.) 리액트 쿼리에서는 이 상태를 표준 API로 사용할 수 있다. 서버에서 데이터를 가져올때 필요한 모든게 표준화가 잘 되어있다는 뜻이다.
+
+
 ## 설치
 
 ```shell
@@ -161,7 +166,7 @@ options에 설정할 수 있는 필드들은 다음과 같습니다.
 |retry| `boolean` or `number` or `(failureCount : number, error : TError) => boolean` 타입의 값을 설정하며, 요청이 실패 했을 때 재요청 할지 설정할 수 있습니다.</br>- 이 값을 true로 하면 실패 했을때 성공할 때까지 계속 반복 요청 합니다.</br>- 이 값을 false로 하면 실패 했을때 재요청하지 않습니다.</br>- 이 값을 3으로 하면 3번 재요청 합니다.</br>- 이 값을 함수 타입으로 설정하면 실패 횟수와 오류타입에 따라 재요청 할지 함수 내에서 결정할 수 있습니다.|
 |retryDelay| `number` or `(retryAttemp:number, error: TError) => number` 타입의 값을 설정하며, 요청이 실패한 후 재요청할 때 지연 시간을 얼마나 가질지 설정할 수 있습니다.</br>- 시간 단위는 ms(밀리세컨드)입니다.</br>- 이 값의 기본값은 (retryAttempt) => Math.min(1000 * 2 ** failureCount, 3000) 입니다. 실패 횟수 n에 따라 2의 n제곱 초 만큼 기다렸다가 재요청 합니다. 그리고 최대 30초까지 기다립니다.|
 |staleTime|데이터의 유효 기간을 ms 단위로 설정합니다. 기본값은 0입니다.|
-|cacheTime|데이터의 캐시 시간을 ms 단위로 설정합니다. 기본값은 5분입니다. 캐시 시간은 Hook을 사용하는 컴포넌트가 언마운트 되고 나서 해당 데이터를 얼마나 유지할지 결정 합니다.|
+|gcTime|가비지컬렉터 타임입니다. 데이터의 캐시 시간을 ms 단위로 설정합니다. 기본값은 5분입니다. 캐시 시간은 Hook을 사용하는 컴포넌트가 언마운트 되고 나서 해당 데이터를 얼마나 유지할지 결정 합니다.|
 |refetchInterval|`false or number` 타입의 값을 설정하며, 이 설정으로 n초마다 데이터를 새로고침 하도록 설정할 수 있습니다. 시간단위는 ms입니다.|
 |refetchOnmount|`boolean` `'always'` 타입의 값을 설정하며 이 설정으로 컴포넌트가 마운트 될때 재요청하는 방식을 설정할 수 있습니다. 기본값은 true 입니다.</br>- true일 때는 데이터가 유효하지 않을 때 재요청 합니다.</br>- false일 때는 컴포넌트가 다시 마운트 되어도 재요청 하지 않습니다.</br>- 'always'일 때는 데이터의 유효 여부와 관계없이 무조건 재요청 합니다.|
 |onSucess|`(data:Data) => void` 타입의 함수를 설정 합니다. 데이터 요청이 성공하고 나서 해야할 일들을 입력해 줄수 있습니다.|
@@ -170,7 +175,7 @@ options에 설정할 수 있는 필드들은 다음과 같습니다.
 |initialData|`Data or () => Data` 타입의 값을 설정합니다. Hook에서 사용할 데이터의 초깃값을 지정하고 싶을때 사용합니다.|
 
 
-## useQuery의 option중 staleTime과 cacheTime
+## useQuery의 option중 staleTime과 gcTime
 
 stale은 '신선하지 않다' 라는 사전적 의미를 가지고 있습니다. </br>
 staleTime 기본값은 0 입니다. 즉 데이터가 유효하지 않다면 데이터를 최신화 해야 합니다. </br></br>
@@ -179,7 +184,7 @@ cacheTime은 useQuery Hook을 사용한 컴포넌트가 언마운트되고 나�
 만약 useQuery가 언마운트 되고나서 5분안에 다시 마운트 된다면 isPending 값이 ture로 되지 않고 이전에 불러온 데이터로 채워져 있게 됩니다. </br>
 그리고 staleTime에 따라 해당 데이터가 유효하다면 재요청 하지 않고 유효하지 않다면 재요청 합니다.</br>
 
-#### staleTime 0 이고 cacheTime이 5분 일때 
+#### staleTime 0 이고 gcTime이 5분 일때 
 - 한번 캐시키를 통해 데이터를 요청하고 5분안에 다시 컴포넌트가 마운트 될 경우 </br>
   컴포넌트가 처음 보일때 이전에 불러온 데이터를 그대로 사용 합니다.</br>
   데이터가 유효하지 않기 때문에 재요청 하고 새로운 데이터로 대체 합니다.</br>
@@ -187,7 +192,7 @@ cacheTime은 useQuery Hook을 사용한 컴포넌트가 언마운트되고 나�
 - 컴포넌트가 언마운트 되고 5분 뒤에 다시 마운트</br>
   5분이 지났기 때문에 캐시에서 기존 데이터가 제거 됏습니다. data가 undefined이며 새로 요청 합니다.</br>
 
-#### staleTime 3분 이고 cacheTime이 5분 일때 
+#### staleTime 3분 이고 gcTime이 5분 일때 
 - 한번 컴포넌트에서 데이터를 요청하면 3분 동안(1000 * 60 * 3) 유효합니다.</br>
 - 5분 안에 컴포넌트가 마운트 됩니다.</br>
   5분 안에 컴포넌트가 마운트 됏기 때문에 캐시에 있던 데이터를 그대로 사용 합니다.</br>
@@ -220,6 +225,7 @@ function App({ dataFromServer }){
     )
 }
 ```
+## prefetchQuery
 
 ```shell
 import React from "react";
@@ -241,6 +247,7 @@ export default async function Default({params}: Props) {
   );
 }
 ```
+## getQueryData
 
 ```shell
 export default function UserPosts({ username }: Props) {
@@ -251,7 +258,7 @@ export default function UserPosts({ username }: Props) {
     gcTime: 300 * 1000,
   });
   const queryClient = useQueryClient();
-  //한번 캐싱된 데이터를 여러 컴포넌트에서 캐시키를 통해 값을 가져와서 사용 할 수 있다.
+  //getQueryData는 한번 캐싱된 데이터를 여러 컴포넌트에서 캐시 키를 통해 값을 가져와서 사용 할 수 있다.
   const user = queryClient.getQueryData(['users', username]); 
   
   if (user) {
@@ -263,6 +270,67 @@ export default function UserPosts({ username }: Props) {
 }
 ```
 
+## dynimic queryKey 사용
+
+queryKey의 searchParams 변수를 파리미터로 넘기는 예제
+
+```shell
+"use client";
+
+import Post from "@/app/(afterLogin)/_component/Post";
+import { Post as IPost } from '@/model/Post';
+import {getSearchResult} from "@/app/(afterLogin)/search/_lib/getSearchResult";
+import {useQuery} from "@tanstack/react-query";
+
+type Props = {
+  searchParams: { q: string, f?: string, pf?: string };
+}
+export default function SearchResult({ searchParams}: Props) {
+  const {data} = useQuery<IPost[], Object, IPost[], [_1: string, _2: string, Props['searchParams']]>({
+    queryKey: ["posts", "search", searchParams],
+    queryFn: getSearchResult,
+    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
+    gcTime: 300 * 1000,
+  });
+
+  return data?.map((post) => (
+    <Post key={post.postId} post={post} />
+  ))
+}
+```
+
+
+## dynimic queryKey를 받는 server api 
+
+next의 부분은 리액트 쿼리에서 담당하는 것이 아닌 next의 서버쪽에서 캐싱하는 내용이다.
+
+```shell
+import {QueryFunction} from "@tanstack/query-core";
+import {Post} from "@/model/Post";
+
+export const getSearchResult: QueryFunction<Post[], [_1: string, _2: string, searchParams: { q: string, pf?: string, f?: string }]>
+  = async ({ queryKey }) => {
+
+  //useQuery호출시 queryKey 값들을 파리미터로 받을 수 있다. 
+  const [_1, _2, searchParams] = queryKey;
+  const res = await fetch(`http://localhost:9090/api/search/${searchParams.q}?${searchParams.toString()}`, {
+    next: {
+      tags: ['posts', 'search', searchParams.q],
+    },
+    cache: 'no-store',
+  });
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+
+  return res.json()
+}
+
+```
 
 https://tanstack.com/query/v5/docs/react/guides/queries
 
