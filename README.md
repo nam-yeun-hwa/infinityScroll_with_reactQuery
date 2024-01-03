@@ -11,8 +11,8 @@
 
 ### Intersection Observer - Options
 
-```
-let observer = new IntersectionObserver(callback, options);
+```shell
+    let observer = new IntersectionObserver(callback, options);
 ```
 
 Intersection Observer를 생성할 때는 옵션을 설정할 수 있습니다.
@@ -69,7 +69,7 @@ Debounce 는 아무리 많은 이벤트가 발생해도 모두 무시하고 특�
 
 # react-query 
 
-## react-Query 장점
+## 장점
 기존 리덕스 툴킷에 비해 캐싱시스템이 잘 되어 있다.
 또한 인터페이스를 표준화 하였다. 보통 데이터를 가져올 때 로딩, 성공, 실패의 상태가 존재를 하는데 예전 리덕스 사가를 사용시 에는 로딩, 성공, 실패의 상태가 없어서 직접 상태를 만들어서 사용했어야 했는데 (리덕스 툴킷에 와서 로딩, 성공, 실패가 표준화가 되었다.) 리액트 쿼리에서는 이 상태를 표준 API로 사용할 수 있다. 서버에서 데이터를 가져올때 필요한 모든게 표준화가 잘 되어있다는 뜻이다.
 
@@ -77,23 +77,23 @@ Debounce 는 아무리 많은 이벤트가 발생해도 모두 무시하고 특�
 ## 설치
 
 ```shell
-npm i @tanstack/react-query @tanstack/react-query-devtools
+    npm i @tanstack/react-query @tanstack/react-query-devtools
 ```
 
-## useQuery 사용법
+## 사용법
 
 쿼리 함수가 변수에 따라 달라진다면 해당 변수를 쿼리 키에 포함시켜야 합니다. 쿼리 키는 검색하는 데이터를 고유하게 식별하며, 쿼리 함수에서 사용하는 변수가 변경될 경우 해당 변수를 쿼리 키에 포함시켜야 합니다. 
 쿼리 키에 종속 변수를 추가하면 해당 변수에 따라 독립적으로 캐시되며, 변수가 변경될 때마다 자동으로 다시 쿼리되어 새로운 데이터를 가져오게 됩니다. (staleTime 설정에 따라 달라집니다).
 
 ```shell
-import { useQuery } from '@tanstack/react-query'
-
-function Todos({ todoId }) {
-  const result = useQuery({
-    queryKey: ['todos', todoId],
-    queryFn: () => fetchTodoById(todoId),
-  })
-}
+    import { useQuery } from '@tanstack/react-query'
+    
+    function Todos({ todoId }) {
+      const result = useQuery({
+        queryKey: ['todos', todoId],
+        queryFn: () => fetchTodoById(todoId),
+      })
+    }
 
 ```
 
@@ -116,47 +116,47 @@ useQuery Hook를 사용하여 반환된 result 객체는 다음 값을 가지고
 
 
 ```shell
-function Todos() {
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodoList,
-  })
-
-  if (isPending) {
-    return <span>Loading...</span>
-  }
-
-  if (isError) {
-    return <span>Error: {error.message}</span>
-  }
-
-  // We can assume by this point that `isSuccess === true`
-  return (
-    <ul>
-      {data.map((todo) => (
-        <li key={todo.id}>{todo.title}</li>
-      ))}
-    </ul>
-  )
-}
+    function Todos() {
+      const { isPending, isError, data, error } = useQuery({
+        queryKey: ['todos'],
+        queryFn: fetchTodoList,
+      })
+    
+      if (isPending) {
+        return <span>Loading...</span>
+      }
+    
+      if (isError) {
+        return <span>Error: {error.message}</span>
+      }
+    
+      // We can assume by this point that `isSuccess === true`
+      return (
+        <ul>
+          {data.map((todo) => (
+            <li key={todo.id}>{todo.title}</li>
+          ))}
+        </ul>
+      )
+    }
 ```
 
-## useQuery의 option
+## option
 
 useQuery를 사용할 때 세 번째 파라미터에 options 객체를 넣어서 해당 Hook의 작동 방식을 설정할 수 있습니다. 
 
 ```shell
-import { useQuery } from '@tanstack/react-query'
-
-function Todos({ todoId }) {
-  const result = useQuery({
-    queryKey: ['todos', todoId],
-    queryFn: () => fetchTodoById(todoId),{
-        enabled:true;
-        refetchOnMount:true;
+    import { useQuery } from '@tanstack/react-query'
+    
+    function Todos({ todoId }) {
+      const result = useQuery({
+        queryKey: ['todos', todoId],
+        queryFn: () => fetchTodoById(todoId),{
+            enabled:true;
+            refetchOnMount:true;
+        }
+      })
     }
-  })
-}
 ```
 
 options에 설정할 수 있는 필드들은 다음과 같습니다.
@@ -175,7 +175,7 @@ options에 설정할 수 있는 필드들은 다음과 같습니다.
 |initialData|`Data or () => Data` 타입의 값을 설정합니다. Hook에서 사용할 데이터의 초깃값을 지정하고 싶을때 사용합니다.|
 
 
-## useQuery의 option중 staleTime과 gcTime
+## staleTime과 gcTime
 
 stale은 '신선하지 않다' 라는 사전적 의미를 가지고 있습니다. </br>
 staleTime 기본값은 0 입니다. 즉 데이터가 유효하지 않다면 데이터를 최신화 해야 합니다. </br></br>
@@ -208,66 +208,66 @@ React Query 버전 5에서 Hydrate는 서버 사이드 렌더링(SSR)과 관련�
 React Query를 사용하면 클라이언트와 서버 간의 상태를 쉽게 동기화할 수 있습니다. Hydrate 구성 요소를 사용하여 SSR에서 초기 데이터를 쉽게 가져올 수 있습니다.
 
 ```shell
-import React from 'react';
-import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
-
-  const queryClient = new QueryClient();
- 
-
-function App({ dataFromServer }){
-    return(
-        <QueryClientProvider client={queryClient}>
-          {/* Hydrate를 사용하여 서버에서 전달된 데이터로 초기화 */}
-            <Hydrate state={dataFromServer}>
-                <ChildComponent/>
-            </Hydrate>
-        </QueryClientProvider>
-    )
-}
+    import React from 'react';
+    import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
+    
+    const queryClient = new QueryClient();
+     
+    
+    function App({ dataFromServer }){
+        return(
+            <QueryClientProvider client={queryClient}>
+              {/* Hydrate를 사용하여 서버에서 전달된 데이터로 초기화 */}
+                <Hydrate state={dataFromServer}>
+                    <ChildComponent/>
+                </Hydrate>
+            </QueryClientProvider>
+        )
+    }
 ```
 ## prefetchQuery
 
 ```shell
-import React from "react";
-import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
-
-export default async function Default({params}: Props) {
-  const {id} = params;
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({queryKey: ['posts', id], queryFn: getSinglePost})
-  await queryClient.prefetchQuery({queryKey: ['posts', id, 'comments'], queryFn: getComments})
-  const dehydratedState = dehydrate(queryClient)
-
-  return (
-    <div className={style.container}>
-      <HydrationBoundary state={dehydratedState}>
-         <ChildComponent/>
-      </HydrationBoundary>
-    </div>
-  );
-}
+    import React from "react";
+    import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
+    
+    export default async function Default({params}: Props) {
+      const {id} = params;
+      const queryClient = new QueryClient();
+      await queryClient.prefetchQuery({queryKey: ['posts', id], queryFn: getSinglePost})
+      await queryClient.prefetchQuery({queryKey: ['posts', id, 'comments'], queryFn: getComments})
+      const dehydratedState = dehydrate(queryClient)
+    
+      return (
+        <div className={style.container}>
+          <HydrationBoundary state={dehydratedState}>
+             <ChildComponent/>
+          </HydrationBoundary>
+        </div>
+      );
+    }
 ```
 ## getQueryData
 
 ```shell
-export default function UserPosts({ username }: Props) {
-  const { data } = useQuery<IPost[], Object, IPost[], [_1: string, _2: string, _3: string]>({
-    queryKey: ['posts', 'users', username],
-    queryFn: getUserPosts,
-    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-    gcTime: 300 * 1000,
-  });
-  const queryClient = useQueryClient();
-  //getQueryData는 한번 캐싱된 데이터를 여러 컴포넌트에서 캐시 키를 통해 값을 가져와서 사용 할 수 있다.
-  const user = queryClient.getQueryData(['users', username]); 
-  
-  if (user) {
-    return data?.map((post) => (
-      <Post key={post.postId} post={post} />
-    ))
-  }
-  return null;
-}
+    export default function UserPosts({ username }: Props) {
+      const { data } = useQuery<IPost[], Object, IPost[], [_1: string, _2: string, _3: string]>({
+        queryKey: ['posts', 'users', username],
+        queryFn: getUserPosts,
+        staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
+        gcTime: 300 * 1000,
+      });
+      const queryClient = useQueryClient();
+      //getQueryData는 한번 캐싱된 데이터를 여러 컴포넌트에서 캐시 키를 통해 값을 가져와서 사용 할 수 있다.
+      const user = queryClient.getQueryData(['users', username]); 
+      
+      if (user) {
+        return data?.map((post) => (
+          <Post key={post.postId} post={post} />
+        ))
+      }
+      return null;
+    }
 ```
 
 ## dynimic queryKey 사용
@@ -275,81 +275,133 @@ export default function UserPosts({ username }: Props) {
 queryKey의 searchParams 변수를 파리미터로 넘기는 예제
 
 ```shell
-"use client";
-
-import Post from "@/app/(afterLogin)/_component/Post";
-import { Post as IPost } from '@/model/Post';
-import {getSearchResult} from "@/app/(afterLogin)/search/_lib/getSearchResult";
-import {useQuery} from "@tanstack/react-query";
-
-type Props = {
-  searchParams: { q: string, f?: string, pf?: string };
-}
-export default function SearchResult({ searchParams}: Props) {
-  const {data} = useQuery<IPost[], Object, IPost[], [_1: string, _2: string, Props['searchParams']]>({
-    queryKey: ["posts", "search", searchParams],
-    queryFn: getSearchResult,
-    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-    gcTime: 300 * 1000,
-  });
-
-  return data?.map((post) => (
-    <Post key={post.postId} post={post} />
-  ))
-}
+    "use client";
+    
+    import Post from "@/app/(afterLogin)/_component/Post";
+    import { Post as IPost } from '@/model/Post';
+    import {getSearchResult} from "@/app/(afterLogin)/search/_lib/getSearchResult";
+    import {useQuery} from "@tanstack/react-query";
+    
+    type Props = {
+      searchParams: { q: string, f?: string, pf?: string };
+    }
+    export default function SearchResult({ searchParams}: Props) {
+      const {data} = useQuery<IPost[], Object, IPost[], [_1: string, _2: string, Props['searchParams']]>({
+        queryKey: ["posts", "search", searchParams],
+        queryFn: getSearchResult,
+        staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
+        gcTime: 300 * 1000,
+      });
+    
+      return data?.map((post) => (
+        <Post key={post.postId} post={post} />
+      ))
+    }
 ```
 
 
 ## dynimic queryKey를 받는 server api 
 
 
-
-
 ```shell
-import {QueryFunction} from "@tanstack/query-core";
-import {Post} from "@/model/Post";
-
-export const getSearchResult: QueryFunction<Post[], [_1: string, _2: string, searchParams: { q: string, pf?: string, f?: string }]>
-  = async ({ queryKey }) => {
-
-  //useQuery호출시 queryKey 값들을 파리미터로 받을 수 있다. 
-  const [_1, _2, searchParams] = queryKey;
-  const res = await fetch(`http://localhost:9090/api/search/${searchParams.q}?${searchParams.toString()}`, {
-    next: {
-      tags: ['posts', 'search', searchParams.q],
-    },
-    cache: 'no-store',
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data')
-  }
-
-  return res.json()
-}
-
+    import {QueryFunction} from "@tanstack/query-core";
+    import {Post} from "@/model/Post";
+    
+    export const getSearchResult: QueryFunction<Post[], [_1: string, _2: string, searchParams: { q: string, pf?: string, f?: string }]>
+      = async ({ queryKey }) => {
+    
+      //useQuery호출시 queryKey 값들을 파리미터로 받을 수 있다. 
+      const [_1, _2, searchParams] = queryKey;
+      const res = await fetch(`http://localhost:9090/api/search/${searchParams.q}?${searchParams.toString()}`, {
+        next: {
+          tags: ['posts', 'search', searchParams.q],
+        },
+        cache: 'no-store',
+      });
+      // The return value is *not* serialized
+      // You can return Date, Map, Set, etc.
+    
+      if (!res.ok) {
+        // This will activate the closest `error.js` Error Boundary
+        throw new Error('Failed to fetch data')
+      }
+    
+      return res.json()
+    }
 ```
 
 ### next
 
 ```shell
- next: {
-    tags: ['posts', 'search', searchParams.q],
-},
+     next: {
+        tags: ['posts', 'search', searchParams.q],
+    },
 ```
 리액트 쿼리에서 담당하는 것이 아닌 next의 서버쪽에서 캐싱하는 내용이다.
 
 ### cache
 ```shell
-cache: 'no-store'
+    cache: 'no-store'
 ```
 
 서버에서 데이터를 받아올때 캐시처리 하지 않을 경우 'no-store' 값을 넣어 준다.
 처음에 한번 읽어온 데이터를 계속 사용할 경우에는 cache 값을 사용하지 않으면 된다.
 cache값을 사용하지 않을 경우 캐시 키에 맞춰 invaildate를 호출해주면 서버에서 새로운 데이터를 불러 온다.
+
+
+## new URLSearchParams
+
+URLSearchParams는 URL 쿼리 문자열을 다루는 데 유용한 인터페이스를 제공합니다.
+
+#### 현재 라우터에 쿼리스트링 'pf=on' 값을 추가 할때
+
+```shell
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('pf', 'on');
+```
+#### 현재 라우터에 쿼리스트링 'pf' 값을 삭제 할때
+
+```shell
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete('pf');
+```
+
+
+```shell
+    import { useRouter } from 'next/router';
+    
+    const MyPage = () => {
+    
+      const pathname = usePathname()
+      const searchParams = useSearchParams();
+      const router = useRouter();
+    
+      const onChangeFollow = () => {
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set('pf', 'on');
+        router.replace(`/search?${newSearchParams.toString()}`);
+      }
+      const onChangeAll = () => {
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.delete('pf');
+        router.replace(`/search?${newSearchParams.toString()}`);
+      }
+    
+      return (
+        <div>
+          ...
+        </div>
+      );
+    };
+    
+    export default MyPage;
+
+```
+
+
+
+이렇게하면 주어진 URL의 쿼리 문자열을 다룰 수 있습니다.
+
 
 https://tanstack.com/query/v5/docs/react/guides/queries
 
