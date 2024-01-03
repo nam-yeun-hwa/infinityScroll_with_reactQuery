@@ -353,20 +353,6 @@ cache값을 사용하지 않을 경우 캐시 키에 맞춰 invaildate를 호출
 
 URLSearchParams는 URL 쿼리 문자열을 다루는 데 유용한 인터페이스를 제공합니다.
 
-### 현재 라우터에 쿼리스트링 'pf=on' 값을 추가 할때
-
-```shell
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('pf', 'on');
-```
-### 현재 라우터에 쿼리스트링 'pf' 값을 삭제 할때
-
-```shell
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.delete('pf');
-```
-
-
 ```shell
     import { useRouter } from 'next/router';
     
@@ -397,6 +383,20 @@ URLSearchParams는 URL 쿼리 문자열을 다루는 데 유용한 인터페이�
     export default MyPage;
 
 ```
+
+### 현재 라우터에 쿼리스트링 'pf=on' 값을 추가 할때
+
+```shell
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('pf', 'on');
+```
+### 현재 라우터에 쿼리스트링 'pf' 값을 삭제 할때
+
+```shell
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete('pf');
+```
+
 
 
 
