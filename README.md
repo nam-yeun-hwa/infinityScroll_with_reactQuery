@@ -302,23 +302,7 @@ export default function SearchResult({ searchParams}: Props) {
 
 ## dynimic queryKey를 받는 server api 
 
-### next
 
-```shell
- next: {
-    tags: ['posts', 'search', searchParams.q],
-},
-```
-리액트 쿼리에서 담당하는 것이 아닌 next의 서버쪽에서 캐싱하는 내용이다.
-
-### cache
-```shell
-cache: 'no-store'
-```
-
-서버에서 데이터를 받아올때 캐시처리 하지 않을 경우 'no-store' 값을 넣어 준다.
-처음에 한번 읽어온 데이터를 계속 사용할 경우에는 cache 값을 사용하지 않으면 된다.
-cache값을 사용하지 않을 경우 캐시 키에 맞춰 invaildate를 호출해주면 서버에서 새로운 데이터를 불러 온다.
 
 
 ```shell
@@ -348,6 +332,24 @@ export const getSearchResult: QueryFunction<Post[], [_1: string, _2: string, sea
 }
 
 ```
+
+### next
+
+```shell
+ next: {
+    tags: ['posts', 'search', searchParams.q],
+},
+```
+리액트 쿼리에서 담당하는 것이 아닌 next의 서버쪽에서 캐싱하는 내용이다.
+
+### cache
+```shell
+cache: 'no-store'
+```
+
+서버에서 데이터를 받아올때 캐시처리 하지 않을 경우 'no-store' 값을 넣어 준다.
+처음에 한번 읽어온 데이터를 계속 사용할 경우에는 cache 값을 사용하지 않으면 된다.
+cache값을 사용하지 않을 경우 캐시 키에 맞춰 invaildate를 호출해주면 서버에서 새로운 데이터를 불러 온다.
 
 https://tanstack.com/query/v5/docs/react/guides/queries
 
