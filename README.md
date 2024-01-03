@@ -349,60 +349,6 @@ queryKey의 searchParams 변수를 파리미터로 넘기는 예제
 cache값을 사용하지 않을 경우 캐시 키에 맞춰 invaildate를 호출해주면 서버에서 새로운 데이터를 불러 온다.
 
 
-## new URLSearchParams
-
-URLSearchParams는 URL 쿼리 문자열을 다루는 데 유용한 인터페이스를 제공합니다.
-
-```shell
-    import { useRouter } from 'next/router';
-    
-    const MyPage = () => {
-    
-      const pathname = usePathname()
-      const searchParams = useSearchParams();
-      const router = useRouter();
-    
-      const onChangeFollow = () => {
-        const newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.set('pf', 'on');
-        router.replace(`/search?${newSearchParams.toString()}`);
-      }
-      const onChangeAll = () => {
-        const newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.delete('pf');
-        router.replace(`/search?${newSearchParams.toString()}`);
-      }
-    
-      return (
-        <div>
-          ...
-        </div>
-      );
-    };
-    
-    export default MyPage;
-
-```
-
-### queryString 'pf=on' 값을 추가 할때
-
-```shell
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('pf', 'on');
-```
-### queryString 'pf' 값을 삭제 할때
-
-```shell
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.delete('pf');
-```
-
-
-
-
-이렇게하면 주어진 URL의 쿼리 문자열을 다룰 수 있습니다.
-
-
 https://tanstack.com/query/v5/docs/react/guides/queries
 
 revalidatePath('/home) > home 폴더에 있는 캐시 전체 삭제
