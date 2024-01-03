@@ -384,13 +384,13 @@ URLSearchParams는 URL 쿼리 문자열을 다루는 데 유용한 인터페이�
 
 ```
 
-### 현재 라우터에 쿼리스트링 'pf=on' 값을 추가 할때
+### queryString 'pf=on' 값을 추가 할때
 
 ```shell
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('pf', 'on');
 ```
-### 현재 라우터에 쿼리스트링 'pf' 값을 삭제 할때
+### queryString 'pf' 값을 삭제 할때
 
 ```shell
     const newSearchParams = new URLSearchParams(searchParams);
