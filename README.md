@@ -1,15 +1,11 @@
+
 # react-intersection-observer
 
 ### Intersection Observer API 란?
 어떤 Element가 화면(viewport)에 노출되었는지를 감지할 수 있는 API이다. 무한 스크롤(Infinite Scroll)을 만들수 있다.
+사용자가 게시물을 스크롤하여 스크롤이 맨 하단이 되었을때 Element를 감지하여 이벤트를 발생 시키고 이벤트 안에서 다음 게시물 api를 호출 하도록 한다.
 
-### 무한 스크롤을 구현하는 이유
-
-- Scroll Event를 사용해서 구현할 때 사용하는 debounce & throttle 을 사용하지 않아도 됩니다..
-- Scroll Event를 사용해서 구현할 때 구하는 offsetTop 값을 구할 때 는 정확한 값을 구하기 위해서 매번 layout을 새로 그리는데 이를 Reflow라 합니다. Intersection Observer를 사용하면 Reflow를 하지 않습니다.
-- Scroll Event를 사용하는것 보다 비교적 이해 및 사용하기가 쉽습니다.
-
-### Intersection Observer - Options
+### options
 
 ```shell
     let observer = new IntersectionObserver(callback, options);
@@ -31,6 +27,13 @@ Intersection Observer를 생성할 때는 옵션을 설정할 수 있습니다.
 - Target Element가 root에 정의된 Element에 얼만큼 노출되었을 때 Callback함수를 실행시킬지 정의하는 옵션입니다. </br>
 - number 또는 number[]로 정의할 수 있습니다.</br>
 - number 로 정의할 경우, Target Element 의 노출 비율에 따라 Callback Function을 한번 호출할 수 있지만, number[] 로 정의할 경우, 각각의 비율로 노출될 때마다 Callback Function을 호출합니다.</br>
+
+### 무한 스크롤을 구현하는 이유
+
+- Scroll Event를 사용해서 구현할 때 사용하는 debounce & throttle 을 사용하지 않아도 됩니다..
+- Scroll Event를 사용해서 구현할 때 구하는 offsetTop 값을 구할 때 는 정확한 값을 구하기 위해서 매번 layout을 새로 그리는데 이를 Reflow라 합니다. Intersection Observer를 사용하면 Reflow를 하지 않습니다.
+- Scroll Event를 사용하는것 보다 비교적 이해 및 사용하기가 쉽습니다.
+
 
 # debounce & throttle
 스로틀(Throttle)과 디바운스(Debounce)란 무엇일까?
@@ -63,9 +66,113 @@ scroll 이벤트가 발생할 때 뭔가 복잡한 작업을 하도록 설정했
 Debounce 는 아무리 많은 이벤트가 발생해도 모두 무시하고 특정 시간사이에 어떤 이벤트도 발생하지 않았을 때 딱 한번만 마지막 이벤트를 발생시키는 기법입니다.  </br>
 따라서 5ms가 지나기전에 계속 이벤트가 발생할 경우 콜백에 반응하는 이벤트는 발생하지 않고 계속 무시됩니다. </br>
 
-
-
 # Reflow
+
+# useInfiniteQuery 사용법
+
+```shell
+export default function PostRecommends() {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+  } = useInfiniteQuery<IPost[], Object, InfiniteData<IPost[]>, [_1: string, _2: string], number>({
+    queryKey: ['posts', 'recommends'], //★★★★ querykey type : [_1: string, _2: string]와 pageParam 자리의 값 number이다.
+    queryFn: getPostRecommends,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.at(-1)?.postId,
+    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
+    gcTime: 300 * 1000,
+  })
+  const { ref, inView } = useInView({
+    threshold: 0,
+    delay: 0,
+  });
+
+  useEffect(() => {
+    if (inView) {
+      !isFetching && hasNextPage && fetchNextPage();
+    }
+  }, [inView, isFetching, hasNextPage, fetchNextPage]);
+
+  return (
+    <>
+      {data?.pages.map((page, i) => (
+        <Fragment key={i}>
+          {page.map((post) => <Post key={post.postId} post={post}/>)}
+        </Fragment>))}
+      <div ref={ref} style={{ height: 50 }} />
+    </>
+  )
+}
+```
+
+getPostRecommends 함수에서는 pageParam을 파라미터로 받아서 쿼리스트링 형태로 api를 호출해주도록 한다.
+
+```shell
+type Props = { pageParam?: number };
+
+export async function getPostRecommends({pageParam}: Props) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/recommends?cursor=${pageParam}`, {
+    next: {
+      tags: ['posts', 'recommends'],
+    },
+  });
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+
+  return res.json()
+}
+```
+
+
+# useInfiniteQuery 속성
+
+- initialPageParam 
+  처음 값
+  
+- getNextPageParam
+  예) getNextPageParam: (lastPage) => lastPage.at(-1)?.postId </br>
+  lastPage는 가장 최근에 불러온 마지막 데이타로 최근에 불러온 게시물의 마지막 postId의 값을 리턴한다.
+
+data의 값들은 [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]] 형태로 이중배열의 값으로 넘어오며 data의 값 안에 pages안에 데이터 값들이 들어 있으며 
+data?.pages.map의 키값이 필요하기 때문에 <Fragment key={i}> </Fragment>)) 형태로 사용 한다.
+
+```shell
+{data?.pages.map((page, i) => (
+    <Fragment key={i}>
+      {page.map((post) => <Post key={post.postId} post={post}/>)}
+    </Fragment>))}
+<div ref={ref} style={{ height: 50 }} />
+```
+
+- fetchNextPage 
+  스크롤이 게시물 하단에 위치할때 발생하는 이벤트 함수
+- hasNextPage 
+  페이지를 다 불러왔을 경우 false 값이다.
+  5개의 게시물을 불러오는데 [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18]]
+  마지막의 게시물의 경우 다음 페이지가 존재 하지 않는다.
+
+
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+
 
 # react-query 
 
@@ -353,3 +460,7 @@ https://tanstack.com/query/v5/docs/react/guides/queries
 
 revalidatePath('/home) > home 폴더에 있는 캐시 전체 삭제
 revalidateTag
+
+
+
+
