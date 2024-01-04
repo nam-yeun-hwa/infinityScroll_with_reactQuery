@@ -33,12 +33,12 @@ ref에 HTML 엘리먼트를 연결해 준다.
 
 ![](https://velog.velcdn.com/images/bunny/post/819b328a-2298-40f5-b4d1-4f71d52bfbd0/image.png)
 
-- threshold
+- #### threshold
   Target Element가 root에 정의된 Element에 얼만큼 노출되었을 때 Callback함수를 실행시킬지 정의하는 옵션입다. </br>
   number 또는 number[]로 정의할 수 있다.</br>
   ref 엘리먼트가 화면에 감지되면 바로 이벤트를 발생 시킨다.
   
-- delay
+- #### delay
   ref 엘리먼트가 화면에 감지되면 0초 후에 이벤트를 발생 시킨다.
 
 
