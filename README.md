@@ -10,21 +10,14 @@
 어떤 Element가 화면(viewport)에 노출되었는지를 감지할 수 있는 API이다. 무한 스크롤(Infinite Scroll)을 만들수 있다.
 사용자가 게시물을 스크롤하여 스크롤이 맨 하단이 되었을때 Element를 감지하여 이벤트를 발생 시키고 이벤트 안에서 다음 게시물 api를 호출 하도록 한다.
 
-### options
+### 무한 스크롤을 Intersection Observer로 구현하는 이유
 
-```shell
-    let observer = new IntersectionObserver(callback, options);
-```
-
-Intersection Observer를 생성할 때는 옵션을 설정할 수 있습니다.
-옵션에는 root, rootMargin, threshold가 있습니다.
-
-![](https://velog.velcdn.com/images/bunny/post/819b328a-2298-40f5-b4d1-4f71d52bfbd0/image.png)
-
-
-
+- Scroll Event를 사용해서 구현할 때 사용하는 debounce & throttle 을 사용하지 않아도 됩니다..
+- Scroll Event를 사용해서 구현할 때 구하는 offsetTop 값을 구할 때 는 정확한 값을 구하기 위해서 매번 layout을 새로 그리는데 이를 Reflow라 합니다. Intersection Observer를 사용하면 Reflow를 하지 않습니다.
+- Scroll Event를 사용하는것 보다 비교적 이해 및 사용하기가 쉽습니다.
 
 ### 사용법
+
 ```shell
 import {useInView} from "react-intersection-observer";
 
@@ -36,7 +29,10 @@ const { ref, inView } = useInView({
 ```
 ref에 HTML 엘리먼트를 연결해 준다.
 
-### 속성
+### options
+
+![](https://velog.velcdn.com/images/bunny/post/819b328a-2298-40f5-b4d1-4f71d52bfbd0/image.png)
+
 - threshold
   Target Element가 root에 정의된 Element에 얼만큼 노출되었을 때 Callback함수를 실행시킬지 정의하는 옵션입다. </br>
   number 또는 number[]로 정의할 수 있다.</br>
@@ -44,13 +40,6 @@ ref에 HTML 엘리먼트를 연결해 준다.
   
 - delay
   ref 엘리먼트가 화면에 감지되면 0초 후에 이벤트를 발생 시킨다.
-
-
-### 무한 스크롤을 Intersection Observer로 구현하는 이유
-
-- Scroll Event를 사용해서 구현할 때 사용하는 debounce & throttle 을 사용하지 않아도 됩니다..
-- Scroll Event를 사용해서 구현할 때 구하는 offsetTop 값을 구할 때 는 정확한 값을 구하기 위해서 매번 layout을 새로 그리는데 이를 Reflow라 합니다. Intersection Observer를 사용하면 Reflow를 하지 않습니다.
-- Scroll Event를 사용하는것 보다 비교적 이해 및 사용하기가 쉽습니다.
 
 
 # debounce & throttle
@@ -309,14 +298,14 @@ options에 설정할 수 있는 필드들은 다음과 같습니다.
 |initialData|`Data or () => Data` 타입의 값을 설정합니다. Hook에서 사용할 데이터의 초깃값을 지정하고 싶을때 사용합니다.|
 
 
-## staleTime과 gcTime
+### staleTime과 gcTime
 
-stale은 '신선하지 않다' 라는 사전적 의미를 가지고 있습니다. </br>
-staleTime 기본값은 0 입니다. 즉 데이터가 유효하지 않다면 데이터를 최신화 해야 합니다. </br></br>
+- stale은 '신선하지 않다' 라는 사전적 의미를 가지고 있습니다. </br>
+  staleTime 기본값은 0 입니다. 즉 데이터가 유효하지 않다면 데이터를 최신화 해야 합니다. </br></br>
 
-cacheTime은 useQuery Hook을 사용한 컴포넌트가 언마운트되고 나서 해당 데이터를 얼마동안 유지할지에 대한 설정입니다. 기본값은 5분입니다. </br>
-만약 useQuery가 언마운트 되고나서 5분안에 다시 마운트 된다면 isPending 값이 ture로 되지 않고 이전에 불러온 데이터로 채워져 있게 됩니다. </br>
-그리고 staleTime에 따라 해당 데이터가 유효하다면 재요청 하지 않고 유효하지 않다면 재요청 합니다.</br>
+- cacheTime은 useQuery Hook을 사용한 컴포넌트가 언마운트되고 나서 해당 데이터를 얼마동안 유지할지에 대한 설정입니다. 기본값은 5분입니다. </br>
+  만약 useQuery가 언마운트 되고나서 5분안에 다시 마운트 된다면 isPending 값이 ture로 되지 않고 이전에 불러온 데이터로 채워져 있게 됩니다. </br>
+  그리고 staleTime에 따라 해당 데이터가 유효하다면 재요청 하지 않고 유효하지 않다면 재요청 합니다.</br>
 
 ### staleTime 0 이고 gcTime이 5분 일때 
 - 한번 캐시키를 통해 데이터를 요청하고 5분안에 다시 컴포넌트가 마운트 될 경우 </br>
@@ -435,7 +424,6 @@ queryKey의 searchParams 변수를 파리미터로 넘기는 예제
 
 
 ## dynimic queryKey를 받는 server api 
-
 
 ```shell
     import {QueryFunction} from "@tanstack/query-core";
