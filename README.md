@@ -1,4 +1,9 @@
 
+# useInfiniteQuery를 이용하여 무한 스크롤 구현하기
+리액트 쿼리의 useInfiniteQuery 훅을 사용하여 페이지 내에 Intersection Observer 엘리먼트를 두고 Intersection Observer가 화면에 감지되면 
+리액트 쿼리에서 다음 게시물을 호출하도록 하는 방식이다.
+
+
 # react-intersection-observer
 
 ### Intersection Observer API 란?
@@ -17,18 +22,31 @@ Intersection Observer를 생성할 때는 옵션을 설정할 수 있습니다.
 ![](https://velog.velcdn.com/images/bunny/post/819b328a-2298-40f5-b4d1-4f71d52bfbd0/image.png)
 
 
-### root
-- 이 옵션에 정의된 Element를 기준으로 Target Element가 노출되었는지 노출 되지 않았는지를 판단합니다. </br>
-- 기본값은 Browser Viewport이며, root 값이 null 또는 지정되지 않았을 때 기본값으로 설정됩니다.</br>
-### rootMargin
-- root에 정의된 Element가 가진 마진값을 의미합니다. 사용법은 CSS의 margin 속성과 매우 유사합니다. </br>
-- threshold를 계산할 때 rootMargin 만큼 더 계산합니다.</br>
-### threshold
-- Target Element가 root에 정의된 Element에 얼만큼 노출되었을 때 Callback함수를 실행시킬지 정의하는 옵션입니다. </br>
-- number 또는 number[]로 정의할 수 있습니다.</br>
-- number 로 정의할 경우, Target Element 의 노출 비율에 따라 Callback Function을 한번 호출할 수 있지만, number[] 로 정의할 경우, 각각의 비율로 노출될 때마다 Callback Function을 호출합니다.</br>
 
-### 무한 스크롤을 구현하는 이유
+
+### 사용법
+```shell
+import {useInView} from "react-intersection-observer";
+
+const { ref, inView } = useInView({
+    threshold: 0, 
+    delay: 0, 
+});
+
+```
+ref에 HTML 엘리먼트를 연결해 준다.
+
+### 속성
+- threshold
+  Target Element가 root에 정의된 Element에 얼만큼 노출되었을 때 Callback함수를 실행시킬지 정의하는 옵션입다. </br>
+  number 또는 number[]로 정의할 수 있다.</br>
+  ref 엘리먼트가 화면에 감지되면 바로 이벤트를 발생 시킨다.
+  
+- delay
+  ref 엘리먼트가 화면에 감지되면 0초 후에 이벤트를 발생 시킨다.
+
+
+### 무한 스크롤을 Intersection Observer로 구현하는 이유
 
 - Scroll Event를 사용해서 구현할 때 사용하는 debounce & throttle 을 사용하지 않아도 됩니다..
 - Scroll Event를 사용해서 구현할 때 구하는 offsetTop 값을 구할 때 는 정확한 값을 구하기 위해서 매번 layout을 새로 그리는데 이를 Reflow라 합니다. Intersection Observer를 사용하면 Reflow를 하지 않습니다.
@@ -70,6 +88,8 @@ Debounce 는 아무리 많은 이벤트가 발생해도 모두 무시하고 특�
 
 # useInfiniteQuery 사용법
 
+페이지 내부에 ref로 연결된 Element가 화면에 보이면 inView가 true값이 되고 fetchNextPage() 함수가 호출 된다.
+
 ```shell
 export default function PostRecommends() {
   const {
@@ -85,11 +105,14 @@ export default function PostRecommends() {
     staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
     gcTime: 300 * 1000,
   })
+
+  //react-intersection-observer
   const { ref, inView } = useInView({
     threshold: 0,
     delay: 0,
   });
 
+  //화면에 ref 엘리먼트가 감지되면 fetchNextPage 함수를 호출해 준다.
   useEffect(() => {
     if (inView) {
       !isFetching && hasNextPage && fetchNextPage();
@@ -105,29 +128,6 @@ export default function PostRecommends() {
       <div ref={ref} style={{ height: 50 }} />
     </>
   )
-}
-```
-
-getPostRecommends 함수에서는 pageParam을 파라미터로 받아서 쿼리스트링 형태로 api를 호출해주도록 한다.
-
-```shell
-type Props = { pageParam?: number };
-
-export async function getPostRecommends({pageParam}: Props) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/recommends?cursor=${pageParam}`, {
-    next: {
-      tags: ['posts', 'recommends'],
-    },
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data')
-  }
-
-  return res.json()
 }
 ```
 
@@ -158,20 +158,47 @@ data?.pages.map의 키값이 필요하기 때문에 <Fragment key={i}> </Fragmen
   페이지를 다 불러왔을 경우 false 값이다.
   5개의 게시물을 불러오는데 [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18]]
   마지막의 게시물의 경우 다음 페이지가 존재 하지 않는다.
+- isFetching
+  현재 데이터를 호출하고 있는지 체크 한다. 현재 데이터가 호출 진행 중일 경우 false를 발생 시킨다.
 
 
+getPostRecommends 함수에서는 pageParam을 파라미터로 받아서 쿼리스트링 형태로 api를 호출해주도록 한다.
 
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
+```shell
+type Props = { pageParam?: number };
 
+export async function getPostRecommends({pageParam}: Props) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/recommends?cursor=${pageParam}`, {
+    next: {
+      tags: ['posts', 'recommends'],
+    },
+  });
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+
+  return res.json()
+}
+```
+
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
 
 
 # react-query 
