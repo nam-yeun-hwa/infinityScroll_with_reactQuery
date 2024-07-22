@@ -12,9 +12,14 @@
 
 ### 무한 스크롤을 Intersection Observer로 구현하는 이유
 
-- Scroll Event를 사용해서 구현할 때 사용하는 debounce & throttle 을 사용하지 않아도 됩니다..
-- Scroll Event를 사용해서 구현할 때 구하는 offsetTop 값을 구할 때 는 정확한 값을 구하기 위해서 매번 layout을 새로 그리는데 이를 Reflow라 합니다. Intersection Observer를 사용하면 Reflow를 하지 않습니다.
-- Scroll Event를 사용하는것 보다 비교적 이해 및 사용하기가 쉽습니다.
+- <b>성능 최적화</b> </br>
+  Scroll Event를 사용할 때는 debounce나 throttle 같은 기술을 통해 이벤트 발생 빈도를 조절해야 한지만 Intersection Observer를 사용하면 이러한 추가적인 조정이 필요 없다.
+
+- <b>Reflow 방지</b></br>
+  Scroll Event를 통해 offsetTop 값을 구할 때마다 브라우저는 layout을 다시 계산하여 화면을 새로 그린다. 이 과정을 Reflow라고 하는데, Intersection Observer는 이를 피할 수 있어 성능 저하를 방지한다.
+
+- <b>사용 편의성</b></br>
+Scroll Event를 사용하는 것보다 Intersection Observer를 사용하는 것이 비교적 이해하고 사용하기 쉽다. Intersection Observer는 교차 상태를 관찰하는 기능을 제공하므로 코드가 간단하고 직관적이다.
 
 ### 사용법
 
